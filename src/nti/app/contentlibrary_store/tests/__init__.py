@@ -10,7 +10,7 @@ __docformat__ = "restructuredtext en"
 from zope.component.hooks import setHooks
 
 import zope.testing.cleanup
- 
+
 from nti.dataserver.tests.mock_dataserver import DSInjectorMixin
 
 from nti.testing.layers import GCLayerMixin
@@ -58,3 +58,30 @@ class ContentlibraryStoreLayerTest(unittest.TestCase):
     layer = SharedConfiguringTestLayer
 
     get_configuration_package = AbstractTestBase.get_configuration_package.__func__
+
+
+from nti.store.payments.stripe import STRIPE
+
+from nti.store.purchase_history import register_purchase_attempt
+
+from nti.store.purchase_order import PurchaseItem
+from nti.store.purchase_order import create_purchase_order
+
+from nti.store.purchase_attempt import create_purchase_attempt as purchase_attempt_creator
+
+
+def create_purchase_attempt(item, quantity=None, description=None):
+    item = PurchaseItem(NTIID=item, Quantity=1)
+    order = create_purchase_order(item, quantity=quantity)
+    result = purchase_attempt_creator(order,
+                                      processor=STRIPE,
+                                      description=description or u'my charge')
+    return result
+
+
+def create_and_register_purchase_attempt(user, item, quantity=None, description=None):
+    attempt = create_purchase_attempt(item, 
+                                      quantity=quantity, 
+                                      description=description)
+    register_purchase_attempt(attempt, user)
+    return attempt

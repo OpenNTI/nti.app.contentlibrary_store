@@ -19,6 +19,10 @@
 	<subscriber handler=".subscribers._invitation_purchase_attempt_refunded" />
 	<subscriber handler=".subscribers._redeemed_purchase_attempt_registered" />
 
+	<!-- Resolvers -->
+	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content" />
+	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content_choice_bundle" />
+
 	<configure zcml:condition="have devmode">
 		<include file="_sample.zcml" />
 	</configure>

@@ -27,7 +27,7 @@ from nti.externalization.externalization import to_external_object
 from nti.app.contentlibrary_store.tests import SharedConfiguringTestLayer
 
 
-class TestPurchasableConent(unittest.TestCase):
+class TestModel(unittest.TestCase):
 
     layer = SharedConfiguringTestLayer
 
