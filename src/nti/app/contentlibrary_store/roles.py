@@ -36,7 +36,7 @@ def get_library(library=None):
 
 
 def get_paths(ntiid, library=None):
-    library = get_library()
+    library = get_library(library)
     paths = library.pathToNTIID(ntiid) if library and ntiid else ()
     return paths or ()
 
