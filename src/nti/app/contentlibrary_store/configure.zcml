@@ -1,0 +1,26 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+			xmlns:i18n="http://namespaces.zope.org/i18n"
+			xmlns:zcml="http://namespaces.zope.org/zcml"
+			xmlns:ext="http://nextthought.com/ntp/ext">
+
+	<include package="zope.component" file="meta.zcml" />
+	<include package="zope.security" file="meta.zcml" />
+	<include package="zope.component" />
+	<include package="zope.security" />
+	
+	<include package="nti.store" />
+	<include package="nti.contentlibrary" />
+
+	<!-- Subscribers -->
+	<subscriber handler=".subscribers._purchase_attempt_refunded" />
+	<subscriber handler=".subscribers._purchase_attempt_successful" />
+	<subscriber handler=".subscribers._redeemed_purchase_attempt_refunded" />
+	<subscriber handler=".subscribers._invitation_purchase_attempt_refunded" />
+	<subscriber handler=".subscribers._redeemed_purchase_attempt_registered" />
+
+	<configure zcml:condition="have devmode">
+		<include file="_sample.zcml" />
+	</configure>
+	
+</configure>

@@ -1,0 +1,27 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+			xmlns:i18n="http://namespaces.zope.org/i18n"
+			xmlns:zcml="http://namespaces.zope.org/zcml"
+			xmlns:pcs="http://nextthought.com/ntp/purchasable">
+
+	<include package="zope.component" file="meta.zcml" />
+	<include package="zope.security" file="meta.zcml" />
+	<include package="zope.component" />
+
+	<include package="nti.store" file="meta.zcml" />
+
+	<pcs:registerPurchasable
+		ntiid="tag:nextthought.com,2011-10:MN-purchasable_content-MiladyCosmetology.cosmetology"
+		title="MiladyCosmetology"
+		description="Milady Cosmetology"
+		provider="NTI-TEST"
+		author="Milady Cosmetology"
+		amount="100"
+		currency="USD"
+		discountable="False"
+		bulk_purchase="True"
+		license="1 Year License"
+		public="True"
+		items="tag:nextthought.com,2011-10:MN-HTML-MiladyCosmetology.cosmetology" />
+	
+</configure>
