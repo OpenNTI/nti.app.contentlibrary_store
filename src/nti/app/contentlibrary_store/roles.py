@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Content role management.
-
-.. $Id: content_roles.py 112281 2017-05-09 01:24:33Z carlos.sanchez $
+.. $Id$
 """
 
 from __future__ import print_function, absolute_import, division

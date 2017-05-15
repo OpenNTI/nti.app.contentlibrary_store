@@ -8,7 +8,6 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
-from hamcrest import has_length
 from hamcrest import assert_that
 
 import os
@@ -16,11 +15,10 @@ import unittest
 
 from zope import component
 
-from nti.app.contentlibrary_store.roles import get_descendants
-from nti.app.contentlibrary_store.roles import get_collection_root
+from zope.event import notify
+
 from nti.app.contentlibrary_store.roles import add_users_content_roles
 from nti.app.contentlibrary_store.roles import get_users_content_roles
-from nti.app.contentlibrary_store.roles import remove_users_content_roles
 
 from nti.contentlibrary.interfaces import IFilesystemContentPackageLibrary
 
@@ -28,18 +26,22 @@ from nti.contentlibrary.filesystem import DynamicFilesystemLibrary as FileLibrar
 
 from nti.dataserver.users import User
 
+from nti.store.interfaces import PA_STATE_SUCCESS
+from nti.store.interfaces import PurchaseAttemptRefunded
+from nti.store.interfaces import PurchaseAttemptSuccessful
+
+from nti.app.contentlibrary_store.tests import create_and_register_purchase_attempt
+
 from nti.app.contentlibrary_store.tests import SharedConfiguringTestLayer
 
 from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
 
 
-class TestRoles(unittest.TestCase):
+class TestSubscribers(unittest.TestCase):
 
     layer = SharedConfiguringTestLayer
 
-    learning = u"tag:nextthought.com,2011-10:MN-HTML-MiladyCosmetology.learning_objectives"
-
-    no_learning = u"tag:nextthought.com,2011-10:MN-HTML-NoCosmetology.learning_objectives"
+    ntiid = u"tag:nextthought.com,2011-10:MN-purchasable_content-MiladyCosmetology.cosmetology"
 
     def setUp(self):
         dirname = os.path.dirname(__file__)
@@ -52,27 +54,19 @@ class TestRoles(unittest.TestCase):
         return usr
 
     @WithMockDSTrans
-    def test_add_users_content_roles(self):
+    def test_success(self):
         user = self.create_user()
-        roles_added = add_users_content_roles(user, (self.learning,))
-        assert_that(roles_added, is_(1))
-
-        roles_added = add_users_content_roles(user, (self.no_learning,))
-        assert_that(roles_added, is_(0))
-
+        purchase = create_and_register_purchase_attempt(user, self.ntiid)
+        notify(PurchaseAttemptSuccessful(purchase))
         roles = get_users_content_roles(user)
         assert_that(roles, is_([(u'mn', u'miladycosmetology.cosmetology')]))
-
+        
     @WithMockDSTrans
-    def test_remove_users_content_roles(self):
+    def test_refund(self):
         user = self.create_user()
-        roles_added = add_users_content_roles(user, (self.learning,))
-        assert_that(roles_added, is_(1))
-
-        roles_removed = remove_users_content_roles(user, (self.learning,))
-        assert_that(roles_removed, is_(1))
-
-    def test_get_descendants(self):
-        unit = get_collection_root(self.learning)
-        d = list(get_descendants(unit))
-        assert_that(d, has_length(3))
+        add_users_content_roles(user, (self.ntiid,))
+        purchase = create_and_register_purchase_attempt(user, self.ntiid)
+        purchase.State = PA_STATE_SUCCESS
+        notify(PurchaseAttemptRefunded(purchase))
+        roles = get_users_content_roles(user)
+        assert_that(roles, is_([]))
