@@ -90,7 +90,7 @@ class TestMailer(ApplicationLayerTest):
             notify(PurchaseAttemptSuccessful(purchase, charge, request=DummyRequest()))
 
             mailer = component.getUtility(ITestMailDelivery)
-            assert_that(mailer.queue, has_length(2))
+            assert_that(mailer.queue, has_length(1))
             msg = mailer.queue[0]
 
             assert_that(msg, has_property('body'))
