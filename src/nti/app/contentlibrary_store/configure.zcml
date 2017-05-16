@@ -19,6 +19,8 @@
 	<subscriber handler=".subscribers._invitation_purchase_attempt_refunded" />
 	<subscriber handler=".subscribers._redeemed_purchase_attempt_registered" />
 
+	<subscriber handler=".mailer._purchase_attempt_successful" />
+		
 	<!-- Resolvers -->
 	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content" />
 	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content_choice_bundle" />

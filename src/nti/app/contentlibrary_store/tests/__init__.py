@@ -60,6 +60,10 @@ class ContentlibraryStoreLayerTest(unittest.TestCase):
     get_configuration_package = AbstractTestBase.get_configuration_package.__func__
 
 
+from nti.store.interfaces import PA_STATE_SUCCESS
+
+from nti.store.gift_registry import register_gift_purchase_attempt
+
 from nti.store.payments.stripe import STRIPE
 
 from nti.store.purchase_history import register_purchase_attempt
@@ -68,6 +72,8 @@ from nti.store.purchase_order import PurchaseItem
 from nti.store.purchase_order import create_purchase_order
 
 from nti.store.purchase_attempt import create_purchase_attempt as purchase_attempt_creator
+
+from nti.store.purchase_attempt import create_gift_purchase_attempt
 
 
 def create_purchase_attempt(item, quantity=None, description=None):
@@ -84,4 +90,17 @@ def create_and_register_purchase_attempt(user, item, quantity=None, description=
                                       quantity=quantity, 
                                       description=description)
     register_purchase_attempt(attempt, user)
+    return attempt
+
+
+def create_and_register_gift_attempt(creator, receiver, item, quantity=None, description=None):
+    item = PurchaseItem(NTIID=item, Quantity=1)
+    order = create_purchase_order(item, quantity=quantity)
+    attempt = create_gift_purchase_attempt(creator=creator, 
+                                           order=order, 
+                                           processor=STRIPE, 
+                                           state=PA_STATE_SUCCESS, 
+                                           description=description or u'my gift',
+                                           receiver=receiver)
+    register_gift_purchase_attempt(creator, attempt)
     return attempt
