@@ -15,6 +15,8 @@ from hamcrest import contains_string
 import os
 from quopri import decodestring
 
+import transaction
+
 from zope import component
 
 from zope.event import notify
@@ -65,7 +67,7 @@ class TestMailer(ApplicationLayerTest):
         user = User.create_user(self.ds, username=username, password=password)
         IUserProfile(user).email = username
         return user
-    
+
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_mailer(self):
         with mock_dataserver.mock_db_trans(self.ds):
@@ -80,13 +82,13 @@ class TestMailer(ApplicationLayerTest):
             # create charge
             address = UserAddress.create(u"1 Infinite Loop", None, u"Cupertino", u"CA",
                                          u"95014", u"USA")
-            charge = PaymentCharge(Name=u'Ichigo', 
+            charge = PaymentCharge(Name=u'Ichigo',
                                    Amount=100.0,
                                    Currency=u'USD',
                                    CardLast4=1234,
                                    Address=address)
             notify(PurchaseAttemptSuccessful(purchase, charge, request=DummyRequest()))
-            
+
             mailer = component.getUtility(ITestMailDelivery)
             assert_that(mailer.queue, has_length(2))
             msg = mailer.queue[0]
@@ -95,4 +97,4 @@ class TestMailer(ApplicationLayerTest):
             body = decodestring(msg.body)
             assert_that(body, contains_string(user.username))
 
-        
+            transaction.abort()
