@@ -41,5 +41,4 @@ setup(
         'nti.contentlibrary',
     ],
     entry_points=entry_points,
-    test_suite="nti.app.contentlibrary_store.tests",
 )
