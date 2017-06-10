@@ -37,9 +37,9 @@ class TestRoles(unittest.TestCase):
 
     layer = SharedConfiguringTestLayer
 
-    learning = u"tag:nextthought.com,2011-10:MN-HTML-MiladyCosmetology.learning_objectives"
+    learning = "tag:nextthought.com,2011-10:MN-HTML-MiladyCosmetology.learning_objectives"
 
-    no_learning = u"tag:nextthought.com,2011-10:MN-HTML-NoCosmetology.learning_objectives"
+    no_learning = "tag:nextthought.com,2011-10:MN-HTML-NoCosmetology.learning_objectives"
 
     def setUp(self):
         dirname = os.path.dirname(__file__)
@@ -61,7 +61,7 @@ class TestRoles(unittest.TestCase):
         assert_that(roles_added, is_(0))
 
         roles = get_users_content_roles(user)
-        assert_that(roles, is_([(u'mn', u'miladycosmetology.cosmetology')]))
+        assert_that(roles, is_([('mn', 'miladycosmetology.cosmetology')]))
 
     @WithMockDSTrans
     def test_remove_users_content_roles(self):

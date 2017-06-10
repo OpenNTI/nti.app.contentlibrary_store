@@ -48,7 +48,7 @@ def _activate_items(purchase, user=None):
 
 
 @component.adapter(IPurchaseAttempt, IPurchaseAttemptSuccessful)
-def _purchase_attempt_successful(purchase, event):
+def _purchase_attempt_successful(purchase, _):
     # CS: We are assuming a non null quantity is for a bulk purchase
     # Therefore we don't modity content roles
     if purchase.Quantity:
@@ -66,7 +66,7 @@ def _return_items(purchase, user=None):
 
 
 @component.adapter(IPurchaseAttempt, IPurchaseAttemptRefunded)
-def _purchase_attempt_refunded(purchase, event):
+def _purchase_attempt_refunded(purchase, _):
     # CS: We are assuming a non null quantity is for a bulk purchase
     # Therefore we don't modity content roles
     if not purchase.Quantity:
@@ -74,7 +74,7 @@ def _purchase_attempt_refunded(purchase, event):
 
 
 @component.adapter(IInvitationPurchaseAttempt, IPurchaseAttemptRefunded)
-def _invitation_purchase_attempt_refunded(purchase, event):
+def _invitation_purchase_attempt_refunded(purchase, _):
     # return all items from linked purchases (redemptions) and refund them
     for username, ntiid in purchase.consumerMap.items():
         purchase = get_purchase_attempt(ntiid)
@@ -82,7 +82,7 @@ def _invitation_purchase_attempt_refunded(purchase, event):
 
 
 @component.adapter(IRedeemedPurchaseAttempt, IPurchaseAttemptRefunded)
-def _redeemed_purchase_attempt_refunded(purchase, event):
+def _redeemed_purchase_attempt_refunded(purchase, _):
     code = purchase.RedemptionCode
     source = get_purchase_by_code(code)
     if IGiftPurchaseAttempt.providedBy(source):
@@ -90,5 +90,5 @@ def _redeemed_purchase_attempt_refunded(purchase, event):
 
 
 @component.adapter(IRedeemedPurchaseAttempt, IRedeemedPurchaseAttemptRegistered)
-def _redeemed_purchase_attempt_registered(purchase, event):
+def _redeemed_purchase_attempt_registered(purchase, _):
     _activate_items(purchase, purchase.creator)

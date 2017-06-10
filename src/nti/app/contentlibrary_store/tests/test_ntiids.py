@@ -24,7 +24,7 @@ class TestResolvers(unittest.TestCase):
 
     layer = SharedConfiguringTestLayer
 
-    ntiid = u"tag:nextthought.com,2011-10:MN-purchasable_content-MiladyCosmetology.cosmetology"
+    ntiid = "tag:nextthought.com,2011-10:MN-purchasable_content-MiladyCosmetology.cosmetology"
 
     @WithMockDSTrans
     def test_finder(self):

@@ -73,7 +73,7 @@ class TestSubscribers(unittest.TestCase):
         purchase = create_and_register_purchase_attempt(user, self.ntiid)
         notify(PurchaseAttemptSuccessful(purchase))
         roles = get_users_content_roles(user)
-        assert_that(roles, is_([(u'mn', u'miladycosmetology.cosmetology')]))
+        assert_that(roles, is_([('mn', 'miladycosmetology.cosmetology')]))
 
     @WithMockDSTrans
     def test_refund_simple_purchase(self):
