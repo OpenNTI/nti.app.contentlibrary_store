@@ -12,7 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import interface
 
 from nti.app.contentlibrary_store.interfaces import IPurchasableContent
-from nti.app.contentlibrary_store.interfaces import IPurchasableContentChoiceBundle
+from nti.app.contentlibrary_store.interfaces import IPurchasableContentPackageBundle
 
 from nti.store.purchasable import Purchasable
 from nti.store.purchasable import create_purchasable
@@ -23,10 +23,9 @@ class PurchasableContent(Purchasable):
     pass
 
 
-@interface.implementer(IPurchasableContentChoiceBundle)
-class PurchasableContentChoiceBundle(PurchasableContent):
-    __external_class_name__ = 'PurchasableContentChoiceBundle'
-    IsPurchasable = False
+@interface.implementer(IPurchasableContentPackageBundle)
+class PurchasableContentPackageBundle(Purchasable):
+    __external_class_name__ = 'PurchasableContentPackageBundle'
 
 
 def create_purchasable_content(ntiid, provider, amount, currency=u'USD', items=(), fee=None,
