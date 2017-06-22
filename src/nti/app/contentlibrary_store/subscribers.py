@@ -56,7 +56,7 @@ def _activate_items(purchase, user=None):
                     continue
                 items.update(x.ntiid for x in bundle.ContentPackages or ())
         else:
-            items = purchasable.Items
+            items = purchasable.Items or ()
         add_users_content_roles(user, items)
 
 
@@ -72,10 +72,20 @@ def _purchase_attempt_successful(purchase, _):
 
 def _return_items(purchase, user=None):
     for ntiid in purchase.Items or ():
+        user = user or purchase.creator
         purchasable = find_object_with_ntiid(ntiid)
-        if _is_purchasable_content(purchasable):
-            user = user or purchase.creator
-            remove_users_content_roles(user, purchasable.Items)
+        if not _is_purchasable_content(purchasable) or not user:
+            continue
+        if IPurchasableContentPackageBundle.providedBy(purchasable):
+            items = set()
+            for ntiid in purchasable.Items or ():
+                bundle = find_object_with_ntiid(ntiid)
+                if not IContentPackageBundle.providedBy(bundle):
+                    continue
+                items.update(x.ntiid for x in bundle.ContentPackages or ())
+        else:
+            items = purchasable.Items or ()
+        remove_users_content_roles(user, purchasable.Items)
 
 
 @component.adapter(IPurchaseAttempt, IPurchaseAttemptRefunded)
