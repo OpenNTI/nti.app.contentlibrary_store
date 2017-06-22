@@ -48,7 +48,6 @@ def _activate_items(purchase, user=None):
         purchasable = find_object_with_ntiid(ntiid)
         if not _is_purchasable_content(purchasable) or not user:
             continue
-        items = purchasable.Items
         if IPurchasableContentPackageBundle.providedBy(purchasable):
             items = set()
             for ntiid in purchasable.Items or ():
@@ -56,6 +55,8 @@ def _activate_items(purchase, user=None):
                 if not IContentPackageBundle.providedBy(bundle):
                     continue
                 items.update(x.ntiid for x in bundle.ContentPackages or ())
+        else:
+            items = purchasable.Items
         add_users_content_roles(user, items)
 
 
