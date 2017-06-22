@@ -5,7 +5,6 @@
 """
 
 from __future__ import print_function, absolute_import, division
-from nti.contentlibrary.interfaces import IContentPackageBundle
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -18,6 +17,8 @@ from nti.app.contentlibrary_store.interfaces import IPurchasableContentPackageBu
 from nti.app.contentlibrary_store.roles import add_users_content_roles
 
 from nti.app.contentlibrary_store.roles import remove_users_content_roles
+
+from nti.contentlibrary.interfaces import IContentPackageBundle
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
