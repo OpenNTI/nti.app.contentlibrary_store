@@ -12,6 +12,7 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 
 from nti.app.contentlibrary_store.interfaces import IPurchasableContent
+from nti.app.contentlibrary_store.interfaces import IPurchasableContentPackageBundle
 
 from nti.app.contentlibrary_store.roles import add_users_content_roles
 
@@ -35,7 +36,8 @@ from nti.store.store import get_purchase_by_code
 
 
 def _is_purchasable_content(purchasable):
-    return IPurchasableContent.providedBy(purchasable) \
+    return IPurchasableContentPackageBundle.providedBy(purchasable) \
+        or IPurchasableContent.providedBy(purchasable) \
         or type(purchasable) is Purchasable  # legacy
 
 

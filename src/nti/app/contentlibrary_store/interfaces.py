@@ -10,13 +10,11 @@ __docformat__ = "restructuredtext en"
 logger = __import__('logging').getLogger(__name__)
 
 from nti.store.interfaces import IPurchasable
-from nti.store.interfaces import IPurchasableChoiceBundle
 
 
 class IPurchasableContent(IPurchasable):
     pass
 
 
-class IPurchasableContentChoiceBundle(IPurchasableChoiceBundle,
-                                      IPurchasableContent):
+class IPurchasableContentPackageBundle(IPurchasable):
     pass
