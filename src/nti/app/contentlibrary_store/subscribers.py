@@ -5,6 +5,7 @@
 """
 
 from __future__ import print_function, absolute_import, division
+from nti.contentlibrary.interfaces import IContentPackageBundle
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -43,10 +44,19 @@ def _is_purchasable_content(purchasable):
 
 def _activate_items(purchase, user=None):
     for ntiid in purchase.Items or ():
+        user = user or purchase.creator
         purchasable = find_object_with_ntiid(ntiid)
-        if _is_purchasable_content(purchasable):
-            user = user or purchase.creator
-            add_users_content_roles(user, purchasable.Items)
+        if not _is_purchasable_content(purchasable) or not user:
+            continue
+        items = purchasable.Items
+        if IPurchasableContentPackageBundle.providedBy(purchasable):
+            items = set()
+            for ntiid in purchasable.Items or ():
+                bundle = find_object_with_ntiid(ntiid)
+                if not IContentPackageBundle.providedBy(bundle):
+                    continue
+                items.update(x.ntiid for x in bundle.ContentPackages or ())
+        add_users_content_roles(user, items)
 
 
 @component.adapter(IPurchaseAttempt, IPurchaseAttemptSuccessful)
