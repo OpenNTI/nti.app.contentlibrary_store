@@ -23,7 +23,7 @@
 		
 	<!-- Resolvers -->
 	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content" />
-	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content_choice_bundle" />
+	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content_package_bundle" />
 
 	<configure zcml:condition="have devmode">
 		<include file="_sample.zcml" />
