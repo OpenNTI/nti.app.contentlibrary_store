@@ -11,5 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 from nti.app.store import MessageFactory
 
+#: Purchasable content NTIID type
+PURCHASABLE_CONTENT = 'purchasable_content'
+
 #: Purchasable content package bundle NTIID type
 PURCHASABLE_CONTENT_PACKAGE_BUNDLE = 'purchasable_content_package_bundle'
