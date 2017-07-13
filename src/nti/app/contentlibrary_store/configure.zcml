@@ -15,6 +15,7 @@
 	<!-- Subscribers -->
 	<subscriber handler=".subscribers._purchase_attempt_refunded" />
 	<subscriber handler=".subscribers._purchase_attempt_successful" />
+	<subscriber handler=".subscribers._content_bundle_vendor_info_synched" />
 	<subscriber handler=".subscribers._redeemed_purchase_attempt_refunded" />
 	<subscriber handler=".subscribers._invitation_purchase_attempt_refunded" />
 	<subscriber handler=".subscribers._redeemed_purchase_attempt_registered" />

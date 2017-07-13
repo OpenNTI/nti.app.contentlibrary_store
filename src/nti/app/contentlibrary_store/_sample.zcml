@@ -5,7 +5,6 @@
 			xmlns:pcs="http://nextthought.com/ntp/purchasable">
 
 	<include package="zope.component" file="meta.zcml" />
-	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 
 	<include package="nti.store" file="meta.zcml" />
