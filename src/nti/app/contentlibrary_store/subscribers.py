@@ -14,11 +14,14 @@ from zope import component
 from nti.app.contentlibrary_store.interfaces import IPurchasableContent
 from nti.app.contentlibrary_store.interfaces import IPurchasableContentPackageBundle
 
+from nti.app.contentlibrary_store.purchasable import sync_purchasable_context
+
 from nti.app.contentlibrary_store.roles import add_users_content_roles
 
 from nti.app.contentlibrary_store.roles import remove_users_content_roles
 
 from nti.contentlibrary.interfaces import IContentPackageBundle
+from nti.contentlibrary.interfaces import IContentPackageBundleVendorInfoSynchronized
 
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -116,3 +119,8 @@ def _redeemed_purchase_attempt_refunded(purchase, _):
 @component.adapter(IRedeemedPurchaseAttempt, IRedeemedPurchaseAttemptRegistered)
 def _redeemed_purchase_attempt_registered(purchase, _):
     _activate_items(purchase, purchase.creator)
+
+
+@component.adapter(IContentPackageBundle, IContentPackageBundleVendorInfoSynchronized)
+def _content_bundle_vendor_info_synched(bundle, _):
+    sync_purchasable_context(bundle)
