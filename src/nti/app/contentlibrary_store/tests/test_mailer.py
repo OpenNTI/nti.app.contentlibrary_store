@@ -53,7 +53,7 @@ from nti.dataserver.tests import mock_dataserver
 
 class TestMailer(ApplicationLayerTest):
 
-    processor = 'stripe'
+    processor = u'stripe'
 
     ntiid = u"tag:nextthought.com,2011-10:MN-purchasable_content-MiladyCosmetology.cosmetology"
 
