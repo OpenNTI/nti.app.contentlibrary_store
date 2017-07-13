@@ -14,6 +14,8 @@ from zope import component
 from nti.app.contentlibrary_store.interfaces import IPurchasableContent
 from nti.app.contentlibrary_store.interfaces import IPurchasableContentPackageBundle
 
+from nti.app.contentlibrary_store.purchasable import sync_purchasable_context
+
 from nti.app.contentlibrary_store.roles import add_users_content_roles
 
 from nti.app.contentlibrary_store.roles import remove_users_content_roles
@@ -121,4 +123,4 @@ def _redeemed_purchase_attempt_registered(purchase, _):
 
 @component.adapter(IContentPackageBundle, IContentPackageBundleVendorInfoSynchronized)
 def _content_bundle_vendor_info_synched(bundle, _):
-    pass
+    sync_purchasable_context(bundle)
