@@ -12,6 +12,10 @@
 	<include package="nti.store" />
 	<include package="nti.contentlibrary" />
 
+	<!-- Adapters -->
+	<adapter factory=".adapters._bundle_to_purchasable" />
+	<adapter factory=".adapters._purchasable_to_bundle" />
+
 	<!-- Subscribers -->
 	<subscriber handler=".subscribers._purchase_attempt_refunded" />
 	<subscriber handler=".subscribers._purchase_attempt_successful" />

@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from zope.traversing.api import traverse
 
+from nti.app.contentlibrary_store import PURCHASABLE_CONTENT_PACKAGE_BUNDLE
+
+from nti.contentlibrary import BUNDLE
+
 from nti.contentlibrary.utils import get_content_vendor_info
 
 from nti.ntiids.ntiids import get_parts
@@ -81,23 +85,32 @@ def get_context_purchasable_ntiid(context, nttype):
     return ntiid
 
 
-def get_context_ntiid_from_purchasable(context, provider, nttype):
+def get_bundle_purchasable_ntiid(context):
+    nttype = PURCHASABLE_CONTENT_PACKAGE_BUNDLE
+    return get_context_ntiid_from_purchasable(context, nttype)
+
+
+def get_context_ntiid_from_purchasable(context, nttype):
     purchasable = IPurchasable(context)
     parts = get_parts(purchasable.NTIID)
     ntiid = make_ntiid(date=parts.date,
                        nttype=nttype,
-                       provider=provider,
+                       provider=parts.provider,
                        specific=parts.specific)
     return ntiid
+
+
+def get_bundle_ntiid_from_purchasable(context):
+    return get_context_ntiid_from_purchasable(context, BUNDLE)
 
 
 def get_nti_context_price(context):
     vendor_info = get_vendor_info(context)
     amount = traverse(vendor_info, 'NTI/Purchasable/Price', default=None)
-    currency = traverse(vendor_info, 
-                        'NTI/Purchasable/Currency', 
+    currency = traverse(vendor_info,
+                        'NTI/Purchasable/Currency',
                         default=u'USD')
-    if amount:
+    if amount is not None:
         result = Price(Amount=float(amount), Currency=currency)
         return result
     return None
