@@ -17,7 +17,6 @@ from nti.app.contentlibrary_store.interfaces import IPurchasableContentPackageBu
 from nti.app.contentlibrary_store.purchasable import sync_purchasable_context
 
 from nti.app.contentlibrary_store.roles import add_users_content_roles
-
 from nti.app.contentlibrary_store.roles import remove_users_content_roles
 
 from nti.contentlibrary.interfaces import IContentPackageBundle
@@ -58,6 +57,8 @@ def _activate_items(purchase, user=None):
                 bundle = find_object_with_ntiid(ntiid)
                 if not IContentPackageBundle.providedBy(bundle):
                     continue
+                # add bundle and packages
+                items.add(bundle.ntiid)
                 items.update(x.ntiid for x in bundle.ContentPackages or ())
         else:
             items = purchasable.Items or ()
@@ -86,10 +87,12 @@ def _return_items(purchase, user=None):
                 bundle = find_object_with_ntiid(ntiid)
                 if not IContentPackageBundle.providedBy(bundle):
                     continue
+                # add bundle and packages
+                items.add(bundle.ntiid)
                 items.update(x.ntiid for x in bundle.ContentPackages or ())
         else:
             items = purchasable.Items or ()
-        remove_users_content_roles(user, purchasable.Items)
+        remove_users_content_roles(user, items)
 
 
 @component.adapter(IPurchaseAttempt, IPurchaseAttemptRefunded)

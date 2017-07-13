@@ -53,15 +53,19 @@ from nti.dataserver.tests import mock_dataserver
 
 class TestMailer(ApplicationLayerTest):
 
-    processor = 'stripe'
+    processor = u'stripe'
 
     ntiid = u"tag:nextthought.com,2011-10:MN-purchasable_content-MiladyCosmetology.cosmetology"
 
     def setUp(self):
         dirname = os.path.dirname(__file__)
-        library = FileLibrary(os.path.join(dirname, 'library'))
-        library.syncContentPackages()
-        component.provideUtility(library, IFilesystemContentPackageLibrary)
+        self.library = FileLibrary(os.path.join(dirname, 'library'))
+        self.library.syncContentPackages()
+        component.provideUtility(self.library, IFilesystemContentPackageLibrary)
+
+    def tearDown(self):
+        gsm = component.getGlobalSiteManager()
+        gsm.unregisterUtility(self.library, IFilesystemContentPackageLibrary)
 
     def create_user(self, username=u'ichigo@bleach.org', password=u'temp001'):
         user = User.create_user(self.ds, username=username, password=password)
