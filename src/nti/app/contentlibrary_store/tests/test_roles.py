@@ -12,12 +12,11 @@ from hamcrest import has_length
 from hamcrest import assert_that
 
 import os
-import unittest
 
 from zope import component
 
+from nti.app.contentlibrary_store.roles import resolve
 from nti.app.contentlibrary_store.roles import get_descendants
-from nti.app.contentlibrary_store.roles import get_collection_root
 from nti.app.contentlibrary_store.roles import add_users_content_roles
 from nti.app.contentlibrary_store.roles import get_users_content_roles
 from nti.app.contentlibrary_store.roles import remove_users_content_roles
@@ -28,14 +27,14 @@ from nti.contentlibrary.filesystem import DynamicFilesystemLibrary as FileLibrar
 
 from nti.dataserver.users import User
 
-from nti.app.contentlibrary_store.tests import SharedConfiguringTestLayer
+from nti.app.testing.application_webtest import ApplicationLayerTest
 
-from nti.dataserver.tests.mock_dataserver import WithMockDSTrans
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
+from nti.dataserver.tests import mock_dataserver
 
 
-class TestRoles(unittest.TestCase):
-
-    layer = SharedConfiguringTestLayer
+class TestRoles(ApplicationLayerTest):
 
     learning = "tag:nextthought.com,2011-10:MN-HTML-MiladyCosmetology.learning_objectives"
 
@@ -43,36 +42,40 @@ class TestRoles(unittest.TestCase):
 
     def setUp(self):
         dirname = os.path.dirname(__file__)
-        library = FileLibrary(os.path.join(dirname, 'library'))
-        library.syncContentPackages()
-        component.provideUtility(library, IFilesystemContentPackageLibrary)
+        self.library = FileLibrary(os.path.join(dirname, 'library'))
+        self.library.syncContentPackages()
+        component.provideUtility(self.library, IFilesystemContentPackageLibrary)
 
     def create_user(self, username=u'ichigo@bleach.org', password=u'temp001'):
         usr = User.create_user(self.ds, username=username, password=password)
         return usr
 
-    @WithMockDSTrans
+    @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_add_users_content_roles(self):
-        user = self.create_user()
-        roles_added = add_users_content_roles(user, (self.learning,))
-        assert_that(roles_added, is_(1))
+        with mock_dataserver.mock_db_trans(self.ds):
+            user = self._create_user(u'ichigo@bleach.org', password=u'temp001')
+            roles_added = add_users_content_roles(user, (self.learning,))
+            assert_that(roles_added, is_(1))
+    
+            roles_added = add_users_content_roles(user, (self.no_learning,))
+            assert_that(roles_added, is_(0))
+    
+            roles = get_users_content_roles(user)
+            assert_that(roles, is_([('mn', 'miladycosmetology.cosmetology')]))
 
-        roles_added = add_users_content_roles(user, (self.no_learning,))
-        assert_that(roles_added, is_(0))
-
-        roles = get_users_content_roles(user)
-        assert_that(roles, is_([('mn', 'miladycosmetology.cosmetology')]))
-
-    @WithMockDSTrans
+    @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_remove_users_content_roles(self):
-        user = self.create_user()
-        roles_added = add_users_content_roles(user, (self.learning,))
-        assert_that(roles_added, is_(1))
+        with mock_dataserver.mock_db_trans(self.ds):
+            user = self._create_user(u'ichigo@bleach.org', password=u'temp001')
+            roles_added = add_users_content_roles(user, (self.learning,))
+            assert_that(roles_added, is_(1))
+    
+            roles_removed = remove_users_content_roles(user, (self.learning,))
+            assert_that(roles_removed, is_(1))
 
-        roles_removed = remove_users_content_roles(user, (self.learning,))
-        assert_that(roles_removed, is_(1))
-
+    @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_get_descendants(self):
-        unit = get_collection_root(self.learning)
-        d = list(get_descendants(unit))
-        assert_that(d, has_length(3))
+        with mock_dataserver.mock_db_trans(self.ds):
+            unit = resolve(self.learning)
+            d = list(get_descendants(unit))
+            assert_that(d, has_length(3))
