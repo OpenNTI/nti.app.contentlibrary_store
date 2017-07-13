@@ -102,12 +102,12 @@ def get_context_purchasable_ntiid(context, nttype, provider=None):
     return ntiid
 
 
-def get_package_purchasable_ntiid(context, provider):
+def get_package_purchasable_ntiid(context, provider=None):
     nttype = PURCHASABLE_CONTENT
     return get_context_purchasable_ntiid(context, nttype, provider)
 
 
-def get_bundle_purchasable_ntiid(context, provider):
+def get_bundle_purchasable_ntiid(context, provider=None):
     nttype = PURCHASABLE_CONTENT_BUNDLE
     return get_context_purchasable_ntiid(context, nttype, provider)
 
