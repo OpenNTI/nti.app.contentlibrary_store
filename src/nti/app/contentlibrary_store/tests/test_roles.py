@@ -25,8 +25,6 @@ from nti.contentlibrary.interfaces import IFilesystemContentPackageLibrary
 
 from nti.contentlibrary.filesystem import DynamicFilesystemLibrary as FileLibrary
 
-from nti.dataserver.users import User
-
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
@@ -45,10 +43,6 @@ class TestRoles(ApplicationLayerTest):
         self.library = FileLibrary(os.path.join(dirname, 'library'))
         self.library.syncContentPackages()
         component.provideUtility(self.library, IFilesystemContentPackageLibrary)
-
-    def create_user(self, username=u'ichigo@bleach.org', password=u'temp001'):
-        usr = User.create_user(self.ds, username=username, password=password)
-        return usr
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_add_users_content_roles(self):
