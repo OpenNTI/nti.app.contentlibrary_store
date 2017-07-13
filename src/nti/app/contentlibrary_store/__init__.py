@@ -15,4 +15,4 @@ from nti.app.store import MessageFactory
 PURCHASABLE_CONTENT = u'purchasable_content'
 
 #: Purchasable content package bundle NTIID type
-PURCHASABLE_CONTENT_PACKAGE_BUNDLE = u'purchasable_content_package_bundle'
+PURCHASABLE_CONTENT_BUNDLE = u'purchasable_content_bundle'

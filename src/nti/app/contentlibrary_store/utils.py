@@ -9,10 +9,16 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from itertools import chain
+
+from zope import component
+
 from zope.traversing.api import traverse
 
-from nti.app.contentlibrary_store import PURCHASABLE_CONTENT_PACKAGE_BUNDLE
+from nti.app.contentlibrary_store import PURCHASABLE_CONTENT
+from nti.app.contentlibrary_store import PURCHASABLE_CONTENT_BUNDLE
 
+from nti.contentlibrary import HTML
 from nti.contentlibrary import BUNDLE
 
 from nti.contentlibrary.utils import get_content_vendor_info
@@ -20,6 +26,7 @@ from nti.contentlibrary.utils import get_content_vendor_info
 from nti.ntiids.ntiids import get_parts
 from nti.ntiids.ntiids import make_ntiid
 
+from nti.store.interfaces import IPrice
 from nti.store.interfaces import IPurchasable
 
 from nti.store.model import Price
@@ -76,18 +83,33 @@ def get_context_purchasable_fee(context):
 get_context_fee = get_context_purchasable_fee
 
 
-def get_context_purchasable_ntiid(context, nttype):
+def get_context_price(context, *names):
+    names = chain(names, ('',)) if names else ('',)
+    for name in names:
+        result = component.queryAdapter(context,  IPrice, name=name)
+        if result is not None:
+            return result
+    return None
+
+
+def get_context_purchasable_ntiid(context, nttype, provider=None):
     parts = get_parts(context.ntiid)
+    provider = provider or parts.provider
     ntiid = make_ntiid(date=parts.date,
                        nttype=nttype,
-                       provider=parts.provider,
+                       provider=provider,
                        specific=parts.specific)
     return ntiid
 
 
-def get_bundle_purchasable_ntiid(context):
-    nttype = PURCHASABLE_CONTENT_PACKAGE_BUNDLE
-    return get_context_ntiid_from_purchasable(context, nttype)
+def get_package_purchasable_ntiid(context, provider):
+    nttype = PURCHASABLE_CONTENT
+    return get_context_purchasable_ntiid(context, nttype, provider)
+
+
+def get_bundle_purchasable_ntiid(context, provider):
+    nttype = PURCHASABLE_CONTENT_BUNDLE
+    return get_context_purchasable_ntiid(context, nttype, provider)
 
 
 def get_context_ntiid_from_purchasable(context, nttype):
@@ -102,6 +124,10 @@ def get_context_ntiid_from_purchasable(context, nttype):
 
 def get_bundle_ntiid_from_purchasable(context):
     return get_context_ntiid_from_purchasable(context, BUNDLE)
+
+
+def get_package_ntiid_from_purchasable(context):
+    return get_context_ntiid_from_purchasable(context, HTML)
 
 
 def get_nti_context_price(context):

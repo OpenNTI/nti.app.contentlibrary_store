@@ -26,9 +26,20 @@
 
 	<subscriber handler=".mailer._purchase_attempt_successful" />
 		
+
+	<!-- Price Finders -->
+	<adapter factory=".adapters._nti_context_price_finder"
+			 for="nti.contentlibrary.interfaces.IContentPackageBundle"
+			 provides="nti.store.interfaces.IPrice" />
+
+	<adapter factory=".adapters._nti_context_price_finder"
+			 for="nti.contentlibrary.interfaces.IContentPackageBundle"
+			 provides="nti.store.interfaces.IPrice"
+			 name="nti" />
+
 	<!-- Resolvers -->
 	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content" />
-	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content_package_bundle" />
+	<utility factory=".ntiids._PurchasableContentResolver" name="purchasable_content_bundle" />
 
 	<configure zcml:condition="have devmode">
 		<include file="_sample.zcml" />

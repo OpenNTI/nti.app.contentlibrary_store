@@ -38,8 +38,8 @@ def _bundle_to_purchasable(bundle):
     return get_purchasable(ntiid) if ntiid else None
 
 
-@interface.implementer(IPurchasable)
-@component.adapter(IContentPackageBundle)
+@component.adapter(IPurchasable)
+@interface.implementer(IContentPackageBundle)
 def _purchasable_to_bundle(purchasable):
     ntiid = get_bundle_ntiid_from_purchasable(purchasable)
     return find_object_with_ntiid(ntiid) if ntiid else None
