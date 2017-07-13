@@ -9,6 +9,7 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+from zope import component
 from zope import lifecycleevent
 
 from nti.app.contentlibrary_store import MessageFactory as _
@@ -32,32 +33,42 @@ from nti.app.contentlibrary_store.model import PurchasableContentPackageBundle
 
 from nti.app.contentlibrary_store.model import create_purchasable_content
 
+from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
+
 from nti.contentlibrary.interfaces import IContentPackageBundle
 from nti.contentlibrary.interfaces import IContentUnitHrefMapper
+
+from nti.contentlibrary.utils import NTI
 
 from nti.store.interfaces import IPurchasable
 
 from nti.store.store import register_purchasable
 
 
+def get_provider(context):
+    provider = get_context_purchasable_provider(context)
+    if not provider:
+        policy = component.queryUtility(ISitePolicyUserEventListener)
+        provider = getattr(policy, 'PROVIDER', None) or NTI
+    return provider
+        
+
 def create_purchasable_from_context(context):
     if not has_vendor_info(context):
         return None
-
+    provider = get_provider(context)
     giftable = is_context_giftable(context)
     redeemable = is_context_redeemable(context)
     public = is_context_enabled_for_purchase(context)
-    provider = get_context_purchasable_provider(context)
-
     # find price
     fee = get_context_fee(context)
-    price = get_context_price(context, provider or '')
+    price = get_context_price(context, provider)
     if price is None:
         return None
     amount = price.Amount
     currency = price.Currency
     fee = float(fee) if fee is not None else fee
-
+    # set factory and ntiid
     if IContentPackageBundle.providedBy(context):
         packages = context.ContentPackages
         factory = PurchasableContentPackageBundle
@@ -66,7 +77,7 @@ def create_purchasable_from_context(context):
         packages = (context,)
         factory = PurchasableContent
         ntiid = get_package_purchasable_ntiid(context, provider)
-
+    # set icon
     icon = thumbnail = None
     if packages:
         icon = packages[0].icon
@@ -76,20 +87,18 @@ def create_purchasable_from_context(context):
             thumbnail = IContentUnitHrefMapper(thumbnail).href
         else:
             thumbnail = None
-
+    # validate dates
     purchase_cutoff_date = get_purchasable_cutoff_date(context)
     redeem_cutoff_date = get_purchasable_redeem_cutoff_date(context)
-
     if      purchase_cutoff_date \
         and redeem_cutoff_date \
         and purchase_cutoff_date > redeem_cutoff_date:
         msg = _(u'RedeemCutOffDate cannot be before PurchaseCutOffDate.')
         raise ValueError(msg)
-
+    # create purchasable
     items = [context.ntiid]
     name = get_context_purchasable_name(context) or context.title
     title = get_context_purchasable_title(context) or context.title
-
     result = create_purchasable_content(ntiid=ntiid,
                                         items=items,
                                         name=name,
@@ -114,7 +123,7 @@ def create_purchasable_from_context(context):
 
 def update_purchasable_context(purchasable, context):
     fee = get_context_fee(context)
-    provider = get_context_purchasable_provider(context)
+    provider = get_provider(context)
     price = get_context_price(context, provider)
     if price is None:  # price removed
         purchasable.Public = False
