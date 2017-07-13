@@ -37,6 +37,10 @@ def get_vendor_info(context):
     return info or {}
 
 
+def has_vendor_info(context):
+    return bool(get_vendor_info(context))
+
+
 def is_context_enabled_for_purchase(context):
     vendor_info = get_vendor_info(context)
     return traverse(vendor_info, 'NTI/Purchasable/Enabled', default=False)
@@ -84,8 +88,7 @@ get_context_fee = get_context_purchasable_fee
 
 
 def get_context_price(context, *names):
-    names = chain(names, ('',)) if names else ('',)
-    for name in names:
+    for name in chain(names, ('',)) if names else ('',):
         result = component.queryAdapter(context,  IPrice, name=name)
         if result is not None:
             return result

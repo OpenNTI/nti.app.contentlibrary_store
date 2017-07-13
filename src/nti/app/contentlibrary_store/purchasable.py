@@ -14,6 +14,7 @@ from zope import lifecycleevent
 from nti.app.contentlibrary_store import MessageFactory as _
 
 from nti.app.contentlibrary_store.utils import get_context_fee
+from nti.app.contentlibrary_store.utils import has_vendor_info
 from nti.app.contentlibrary_store.utils import get_context_price
 from nti.app.contentlibrary_store.utils import is_context_giftable
 from nti.app.contentlibrary_store.utils import is_context_redeemable
@@ -40,6 +41,9 @@ from nti.store.store import register_purchasable
 
 
 def create_purchasable_from_context(context):
+    if not has_vendor_info(context):
+        return None
+
     giftable = is_context_giftable(context)
     redeemable = is_context_redeemable(context)
     public = is_context_enabled_for_purchase(context)
@@ -47,7 +51,7 @@ def create_purchasable_from_context(context):
 
     # find price
     fee = get_context_fee(context)
-    price = get_context_price(context, provider)
+    price = get_context_price(context, provider or '')
     if price is None:
         return None
     amount = price.Amount
