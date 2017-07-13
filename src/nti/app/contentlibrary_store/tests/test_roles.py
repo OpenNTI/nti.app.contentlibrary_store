@@ -44,6 +44,10 @@ class TestRoles(ApplicationLayerTest):
         self.library.syncContentPackages()
         component.provideUtility(self.library, IFilesystemContentPackageLibrary)
 
+    def tearDown(self):
+        gsm = component.getGlobalSiteManager()
+        gsm.unregisterUtility(self.library, IFilesystemContentPackageLibrary)
+        
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_add_users_content_roles(self):
         with mock_dataserver.mock_db_trans(self.ds):
