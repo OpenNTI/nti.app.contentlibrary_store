@@ -1,0 +1,11 @@
+{
+    "NTI": {
+        "Purchasable": {
+            "Currency": "USD",
+            "Enabled": true,
+            "Giftable": true,
+            "Price": 149,
+            "Provider": "MN"
+        }
+    }
+}

@@ -14,6 +14,7 @@ from zope import interface
 
 from nti.app.contentlibrary_store.utils import get_nti_context_price
 from nti.app.contentlibrary_store.utils import get_bundle_purchasable_ntiid
+from nti.app.contentlibrary_store.utils import get_context_purchasable_provider
 from nti.app.contentlibrary_store.utils import get_bundle_ntiid_from_purchasable
 
 from nti.contentlibrary.interfaces import IContentPackageBundle
@@ -34,7 +35,8 @@ def _nti_context_price_finder(context):
 @interface.implementer(IPurchasable)
 @component.adapter(IContentPackageBundle)
 def _bundle_to_purchasable(bundle):
-    ntiid = get_bundle_purchasable_ntiid(bundle)
+    provider = get_context_purchasable_provider(bundle)
+    ntiid = get_bundle_purchasable_ntiid(bundle, provider)
     return get_purchasable(ntiid) if ntiid else None
 
 
