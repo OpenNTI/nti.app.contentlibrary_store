@@ -94,7 +94,7 @@ def add_users_content_roles(user, items):
     return len(roles_to_add)
 
 
-def remove_users_content_roles(user, items, library=None):
+def remove_users_content_roles(user, items):
     """
     Remove the content roles from the given user
 
