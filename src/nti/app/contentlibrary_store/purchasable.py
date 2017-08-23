@@ -9,12 +9,9 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from zope import component
 from zope import lifecycleevent
 
-from zope.annotation.interfaces import IAnnotations
-
-from zope.component.hooks import getSite
+from nti.app.contentlibrary.hostpolicy import get_site_provider
 
 from nti.app.contentlibrary_store import MessageFactory as _
 
@@ -37,8 +34,6 @@ from nti.app.contentlibrary_store.model import PurchasableContentPackageBundle
 
 from nti.app.contentlibrary_store.model import create_purchasable_content
 
-from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
-
 from nti.contentlibrary.interfaces import IContentPackageBundle
 from nti.contentlibrary.interfaces import IContentUnitHrefMapper
 
@@ -52,11 +47,7 @@ from nti.store.store import register_purchasable
 def get_provider(context):
     provider = get_context_purchasable_provider(context)
     if not provider:
-        policy = component.queryUtility(ISitePolicyUserEventListener)
-        provider = getattr(policy, 'PROVIDER', None)
-        if not provider:
-            annontations = IAnnotations(getSite(), {})
-            provider = annontations.get('PROVIDER')
+        provider = get_site_provider()
     return provider or NTI
         
 
