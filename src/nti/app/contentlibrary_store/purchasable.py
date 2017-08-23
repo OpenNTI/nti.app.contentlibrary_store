@@ -12,6 +12,10 @@ logger = __import__('logging').getLogger(__name__)
 from zope import component
 from zope import lifecycleevent
 
+from zope.annotation.interfaces import IAnnotations
+
+from zope.component.hooks import getSite
+
 from nti.app.contentlibrary_store import MessageFactory as _
 
 from nti.app.contentlibrary_store.utils import get_context_fee
@@ -38,7 +42,7 @@ from nti.appserver.policies.interfaces import ISitePolicyUserEventListener
 from nti.contentlibrary.interfaces import IContentPackageBundle
 from nti.contentlibrary.interfaces import IContentUnitHrefMapper
 
-from nti.contentlibrary.utils import NTI
+from nti.contentlibrary import NTI
 
 from nti.store.interfaces import IPurchasable
 
@@ -49,8 +53,11 @@ def get_provider(context):
     provider = get_context_purchasable_provider(context)
     if not provider:
         policy = component.queryUtility(ISitePolicyUserEventListener)
-        provider = getattr(policy, 'PROVIDER', None) or NTI
-    return provider
+        provider = getattr(policy, 'PROVIDER', None)
+        if not provider:
+            annontations = IAnnotations(getSite(), {})
+            provider = annontations.get('PROVIDER')
+    return provider or NTI
         
 
 def create_purchasable_from_context(context):
