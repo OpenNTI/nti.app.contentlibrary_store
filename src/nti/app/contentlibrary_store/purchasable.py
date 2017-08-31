@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
+import six
+
 from zope import lifecycleevent
 
 from nti.app.contentlibrary.hostpolicy import get_site_provider
@@ -49,7 +51,7 @@ def get_provider(context):
     if not provider:
         provider = get_site_provider()
     return provider or NTI
-        
+
 
 def create_purchasable_from_context(context):
     if not has_vendor_info(context):
@@ -80,11 +82,10 @@ def create_purchasable_from_context(context):
     if packages:
         icon = packages[0].icon
         thumbnail = packages[0].thumbnail
-        icon = IContentUnitHrefMapper(icon).href if icon else None
-        if thumbnail:
+        if icon and not isinstance(icon, six.string_types):
+            icon = IContentUnitHrefMapper(icon).href
+        if thumbnail and not isinstance(thumbnail, six.string_types):
             thumbnail = IContentUnitHrefMapper(thumbnail).href
-        else:
-            thumbnail = None
     # validate dates
     purchase_cutoff_date = get_purchasable_cutoff_date(context)
     redeem_cutoff_date = get_purchasable_redeem_cutoff_date(context)
