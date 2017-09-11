@@ -8,6 +8,14 @@ entry_points = {
 }
 
 
+TESTS_REQUIRE = [
+    'nti.app.testing',
+    'nti.testing',
+    'zope.dottedname',
+    'zope.testrunner',
+]
+
+
 def _read(fname):
     with codecs.open(fname, encoding='utf-8') as f:
         return f.read()
@@ -30,15 +38,20 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython'
     ],
+    url="https://github.com/NextThought/nti.app.contentlibrary_store",
     zip_safe=True,
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
     namespace_packages=['nti', 'nti.app'],
+    tests_require=TESTS_REQUIRE,
     install_requires=[
         'setuptools',
         'nti.store',
         'nti.contentlibrary',
     ],
+    extras_require={
+        'test': TESTS_REQUIRE,
+    },
     entry_points=entry_points,
 )
