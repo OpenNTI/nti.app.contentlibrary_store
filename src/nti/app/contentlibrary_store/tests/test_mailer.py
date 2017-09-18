@@ -27,9 +27,9 @@ from nti.contentlibrary.interfaces import IFilesystemContentPackageLibrary
 
 from nti.contentlibrary.filesystem import DynamicFilesystemLibrary as FileLibrary
 
-from nti.dataserver.users import User
-
 from nti.dataserver.users.interfaces import IUserProfile
+
+from nti.dataserver.users.users import User
 
 from nti.store.charge import UserAddress
 from nti.store.charge import PaymentCharge
