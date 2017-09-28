@@ -12,6 +12,10 @@
 	<include package="nti.store" />
 	<include package="nti.contentlibrary" />
 
+	<utility factory=".generations.install._SchemaManager"
+			 name="nti.dataserver-app-contentlibrary-store"
+			 provides="zope.generations.interfaces.IInstallableSchemaManager" />
+
 	<!-- Adapters -->
 	<adapter factory=".adapters._bundle_to_purchasable" />
 	<adapter factory=".adapters._purchasable_to_bundle" />
