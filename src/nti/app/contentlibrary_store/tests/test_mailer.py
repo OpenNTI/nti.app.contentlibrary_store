@@ -15,8 +15,6 @@ from hamcrest import contains_string
 import os
 from quopri import decodestring
 
-import transaction
-
 from zope import component
 
 from zope.event import notify
@@ -100,5 +98,3 @@ class TestMailer(ApplicationLayerTest):
             assert_that(msg, has_property('body'))
             body = decodestring(msg.body)
             assert_that(body, contains_string(user.username))
-
-            transaction.abort()
