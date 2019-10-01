@@ -79,7 +79,7 @@ def do_evolve(context):
                             pass
                     unregisterUtility(registry, name=name,
                                       provided=IPurchasableContentPackageBundle)
-                    
+
     component.getGlobalSiteManager().unregisterUtility(mock_ds, IDataserver)
     logger.info('Content library store evolution %s done.', generation)
     return seen

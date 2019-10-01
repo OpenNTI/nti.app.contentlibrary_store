@@ -17,6 +17,8 @@ import os
 
 from zope import component
 
+from nti.app.contentlibrary_store.interfaces import IPurchasableContentPackageBundle
+
 from nti.contentlibrary.interfaces import IContentPackageBundle
 from nti.contentlibrary.interfaces import IContentPackageBundleLibrary
 from nti.contentlibrary.interfaces import IFilesystemContentPackageLibrary
@@ -24,7 +26,7 @@ from nti.contentlibrary.interfaces import IFilesystemContentPackageLibrary
 from nti.contentlibrary.bundle import ContentPackageBundleLibrary
 from nti.contentlibrary.bundle import _ContentPackageBundleLibrarySynchronizer
 
-from nti.contentlibrary.filesystem import FilesystemBucket 
+from nti.contentlibrary.filesystem import FilesystemBucket
 from nti.contentlibrary.filesystem import DynamicFilesystemLibrary as FileLibrary
 
 from nti.ntiids.ntiids import find_object_with_ntiid
@@ -36,6 +38,8 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.dataserver.tests import mock_dataserver
+
+from nti.site.utils import unregisterUtility
 
 
 class TestPurchasable(ApplicationLayerTest):
@@ -66,19 +70,23 @@ class TestPurchasable(ApplicationLayerTest):
         gsm = component.getGlobalSiteManager()
         gsm.unregisterUtility(self.bundles, IContentPackageBundleLibrary)
         gsm.unregisterUtility(self.library, IFilesystemContentPackageLibrary)
+        for name, unused_bundle in component.getUtilitiesFor(IPurchasableContentPackageBundle):
+            unregisterUtility(gsm, name=name,
+                              provided=IPurchasableContentPackageBundle)
+
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_purchasable(self):
         with mock_dataserver.mock_db_trans(self.ds):
             bundle = find_object_with_ntiid(self.bundle_ntiid)
             assert_that(bundle, is_not(none()))
-            
+
             purchasable = IPurchasable(bundle, None)
             assert_that(purchasable, is_not(none()))
-            assert_that(purchasable, 
+            assert_that(purchasable,
                         has_property('__parent__', is_(bundle)))
-            assert_that(purchasable, 
+            assert_that(purchasable,
                         has_property('Amount', is_(149.0)))
-            
+
             bundle = IContentPackageBundle(purchasable, None)
             assert_that(bundle, is_not(none()))
