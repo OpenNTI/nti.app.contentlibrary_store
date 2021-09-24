@@ -46,6 +46,7 @@ setup(
     namespace_packages=['nti', 'nti.app'],
     tests_require=TESTS_REQUIRE,
     install_requires=[
+        'nti.app.store',
         'setuptools',
         'nti.store',
         'nti.contentlibrary',
